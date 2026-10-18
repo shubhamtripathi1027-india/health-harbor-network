@@ -56,17 +56,17 @@ afterEach(cleanup);
 describe("Low-stock alerts", () => {
   it("alerts below minimum but not at or above it", () => {
     fixtures[0] = centre("c1", [medicine("Below", 1999), medicine("At", 2000), medicine("Above", 2001)]);
-    fixtures[1] = centre("c2", [medicine("Other shortage", 1000)]);
+    fixtures[1] = centre("c2", [medicine("Below", 1000), medicine("At", 4000), medicine("Above", 4000)]);
     renderDashboard();
     const alerts = within(section("Low-stock alerts"));
     expect(statValue("Low-stock alerts")).toBe("2");
-    expect(alerts.getByText("Below")).toBeInTheDocument();
-    expect(alerts.getByText("Other shortage")).toBeInTheDocument();
+    expect(alerts.getAllByText("Below")).toHaveLength(2);
     expect(alerts.queryByText("At")).not.toBeInTheDocument();
     expect(alerts.queryByText("Above")).not.toBeInTheDocument();
   });
   it("classifies below half as critical, exactly half as low, and minimum as OK", () => {
     fixtures[0] = centre("c1", [medicine("Critical boundary", 999), medicine("Half boundary", 1000), medicine("Minimum boundary", 2000)]);
+    fixtures[1] = centre("c2", [medicine("Critical boundary", 4000), medicine("Half boundary", 4000), medicine("Minimum boundary", 4000)]);
     renderDashboard();
     expect(inventoryRow("Critical boundary").getByText("Critical")).toBeInTheDocument();
     expect(inventoryRow("Half boundary").getByText("Low")).toBeInTheDocument();
@@ -100,6 +100,17 @@ describe("Redistribution approval", () => {
   });
 });
 describe("Doctor attendance", () => {
+  it("changes the stored attendance count incrementally when the list is only a staff sample", () => {
+    const sample = centre("c1", [medicine("Paracetamol", 650)]);
+    sample.doctors.total = 6;
+    sample.doctors.present = 4;
+    fixtures[0] = sample;
+    renderDashboard();
+    expect(statValue("Doctors present")).toBe("4/7 57%");
+    fireEvent.click(screen.getByRole("button", { name: /Dr\. Test/ }));
+    expect(statValue("Doctors present")).toBe("3/7 43%");
+    expect(within(section("Doctor attendance")).getByText("3/6")).toBeInTheDocument();
+  });
   it("toggles present to absent and back, updating centre and network totals", () => {
     renderDashboard();
     const attendance = within(section("Doctor attendance"));
