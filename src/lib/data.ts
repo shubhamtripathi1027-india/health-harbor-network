@@ -7,7 +7,7 @@ export type Centre = {
   medicines: Medicine[];
 };
 
-const meds = (v: number[]): Medicine[] => [
+const meds = (v: [number, number, number, number, number, number, number]): Medicine[] => [
   { name: "Paracetamol 500mg", nameHi: "पैरासिटामोल 500mg", stock: v[0], min: 2000, unit: "tabs" },
   { name: "Amoxicillin 250mg", nameHi: "एमोक्सिसिलिन 250mg", stock: v[1], min: 1000, unit: "caps" },
   { name: "ORS Sachets", nameHi: "ओआरएस पैकेट", stock: v[2], min: 500, unit: "packs" },
@@ -79,7 +79,7 @@ export type Recommendation = { med: string; medHi: string; from: string; to: str
 /** Move surplus (stock above 1.5x min) from donors to centres below min. */
 export function computeRecommendations(cs: Centre[]): Recommendation[] {
   const recs: Recommendation[] = [];
-  const n = cs[0].medicines.length;
+  const n = cs[0]?.medicines.length ?? 0;
   for (let i = 0; i < n; i++) {
     const surplus = cs.map((c) => ({ c, s: Math.floor(c.medicines[i]!.stock - c.medicines[i]!.min * 1.5) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
     for (const c of cs) {
