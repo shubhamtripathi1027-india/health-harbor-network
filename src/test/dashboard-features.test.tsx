@@ -95,7 +95,7 @@ describe("Redistribution approval", () => {
     expect(inventoryRow("Paracetamol").getByText("3000")).toBeInTheDocument();
     expect(statValue("Low-stock alerts")).toBe("0");
     expect(suggestions.queryByRole("button", { name: "Approve" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "CHC Donor", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: /^CHC Donor$/ }));
     expect(inventoryRow("Paracetamol").getByText("6050")).toBeInTheDocument();
   });
 });
