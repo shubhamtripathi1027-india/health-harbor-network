@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Test dashboard rules through the existing route component with isolated fixtures and stubbed chart containers; this protects behavior without refactoring production code for tests.
