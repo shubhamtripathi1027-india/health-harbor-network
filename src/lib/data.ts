@@ -81,9 +81,9 @@ export function computeRecommendations(cs: Centre[]): Recommendation[] {
   const recs: Recommendation[] = [];
   const n = cs[0].medicines.length;
   for (let i = 0; i < n; i++) {
-    const surplus = cs.map((c) => ({ c, s: Math.floor(c.medicines[i].stock - c.medicines[i].min * 1.5) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
+    const surplus = cs.map((c) => ({ c, s: Math.floor(c.medicines[i]!.stock - c.medicines[i]!.min * 1.5) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
     for (const c of cs) {
-      const m = c.medicines[i];
+      const m = c.medicines[i]!;
       let need = m.min * 1.5 - m.stock;
       if (m.stock >= m.min) continue;
       for (const d of surplus) {

@@ -36,7 +36,7 @@ function Dashboard() {
   const alerts = view.flatMap((c) => c.medicines.filter((m) => m.stock < m.min).map((m) => ({ c, m })));
 
   const days = t("days").split(",");
-  const trend = days.map((d, i) => ({ d, v: sum((c) => c.patients.week[i]) }));
+  const trend = days.map((d, i) => ({ d, v: sum((c) => c.patients.week[i] ?? 0) }));
   const bedData = view.map((c) => ({ n: cname(c).replace(/^(PHC|CHC|District Hospital|पीएचसी|सीएचसी|जिला अस्पताल) /, ""), [t("occupied")]: c.beds.occupied, [t("free")]: c.beds.total - c.beds.occupied }));
 
   const applyRec = (key: string, r: (typeof recs)[number]) => {
@@ -50,7 +50,7 @@ function Dashboard() {
   const toggleDoc = (cid: string, idx: number) => setData((prev) => prev.map((c) => {
     if (c.id !== cid) return c;
     const list = c.doctors.list.map((d, i) => (i === idx ? { ...d, present: !d.present } : d));
-    const delta = list[idx].present ? 1 : -1;
+    const delta = list[idx]!.present ? 1 : -1;
     return { ...c, doctors: { ...c.doctors, list, present: c.doctors.present + delta } };
   }));
 
@@ -58,7 +58,7 @@ function Dashboard() {
 
   const invCentre = sel === "all" ? data[0] : view[0];
   const [invId, setInvId] = useState("c1");
-  const inv = sel === "all" ? byId(invId) : invCentre;
+  const inv = (sel === "all" ? byId(invId) : invCentre)!;
 
   return (
     <div className="min-h-screen bg-background">
